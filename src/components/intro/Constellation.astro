@@ -1,0 +1,30 @@
+---
+// No server data needed — the SVG is built entirely in the client script.
+---
+
+<div class="constellation" id="constellation" aria-hidden="true"></div>
+
+<script>
+  import { initConstellation } from '../../scripts/constellation';
+  const container = document.getElementById('constellation') as HTMLElement | null;
+  if (container) initConstellation(container);
+</script>
+
+<style>
+  .constellation {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /*
+   * Keyframe referenced by constellation.ts via g.style.animation.
+   * Astro does NOT scope @keyframes, so 'con-twinkle' is globally accessible.
+   * Opacity range 0.7–1.0 keeps the twinkle subtle, not distracting.
+   */
+  @keyframes con-twinkle {
+    from { opacity: 1;   }
+    to   { opacity: 0.7; }
+  }
+</style>

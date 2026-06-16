@@ -1,0 +1,52 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title?:       string;
+  description?: string;
+}
+
+const {
+  title       = 'Andres Botina — Portafolio',
+  description = 'Portafolio personal de Andres Botina. Desarrollador de software.',
+} = Astro.props;
+
+// Requires `site` to be set in astro.config.mjs; skipped when undefined.
+const canonicalURL = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="author" content="Andres Botina" />
+    <meta name="theme-color" content="#0a0a0a" />
+
+    {canonicalURL && <link rel="canonical" href={canonicalURL.toString()} />}
+
+    <!-- Open Graph -->
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type"        content="website" />
+    {canonicalURL && <meta property="og:url" content={canonicalURL.toString()} />}
+    <!-- TODO: add <meta property="og:image"> once the image is ready -->
+
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

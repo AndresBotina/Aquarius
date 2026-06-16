@@ -1,0 +1,283 @@
+---
+import { PHASES, CONTACTS } from '../../data/intro';
+---
+
+<!-- Film-grain overlay: feTurbulence SVG tiled at 250px, animated for life -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Subtle ambient radial glow above the constellation -->
+<div class="ambient" aria-hidden="true"></div>
+
+<!-- Text stage — fades out at the end of the sequence -->
+<main class="stage">
+  <div id="text-wrapper" class="text-wrapper" aria-live="polite">
+    <h1 class="headline">
+      <span class="headline-inner" id="headline-inner">{PHASES[0].text}</span><span class="cursor-line" id="cursor-line" aria-hidden="true"></span>
+    </h1>
+  </div>
+</main>
+
+<!--
+  Contact button — position: fixed so it's independent of the stage layout.
+  Starts at top: 68% (below the text) and transitions to top: 50% (true
+  center) when .finale is added at the end of the sequence.
+-->
+<div class="contact-wrap" id="contact-wrap" aria-hidden="true">
+  {CONTACTS.map(({ href, label, icon }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="contact-btn"
+      data-brand={label.toLowerCase()}
+      aria-label={label}
+    >
+      {icon === 'whatsapp' && (
+        <svg class="contact-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M16 3C8.832 3 3 8.832 3 16c0 2.376.658 4.596 1.8 6.492L3 29l6.71-1.762A12.93 12.93 0 0 0 16 29c7.168 0 13-5.832 13-13S23.168 3 16 3Z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M21.5 18.5c-.3-.15-1.77-.874-2.045-.974-.274-.1-.474-.15-.673.15-.2.3-.773.974-.948 1.174-.174.2-.349.224-.648.075-.3-.15-1.265-.466-2.41-1.485-.89-.794-1.492-1.774-1.667-2.074-.174-.3-.018-.462.131-.61.134-.134.3-.35.45-.524.149-.174.199-.3.299-.499.1-.2.05-.374-.025-.524-.075-.15-.673-1.623-.923-2.222-.242-.584-.489-.505-.673-.514l-.573-.01c-.2 0-.524.075-.798.374-.274.3-1.048 1.024-1.048 2.498 0 1.473 1.073 2.897 1.222 3.097.15.2 2.11 3.22 5.114 4.513.715.309 1.273.493 1.708.632.717.228 1.37.196 1.886.119.575-.086 1.771-.724 2.02-1.423.25-.7.25-1.3.175-1.424-.075-.123-.274-.198-.574-.348Z" fill="currentColor"/>
+        </svg>
+      )}
+      {icon === 'gmail' && (
+        <svg class="contact-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4 8h24v16H4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M4 8l12 10L28 8" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      )}
+      {icon === 'github' && (
+        <svg class="contact-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M16 3C8.82 3 3 8.82 3 16c0 5.75 3.73 10.62 8.9 12.34.65.12.89-.28.89-.63v-2.2c-3.62.78-4.38-1.75-4.38-1.75-.59-1.5-1.44-1.9-1.44-1.9-1.18-.8.09-.79.09-.79 1.3.09 1.99 1.34 1.99 1.34 1.16 1.98 3.04 1.41 3.78 1.08.12-.84.45-1.41.82-1.73-2.89-.33-5.93-1.44-5.93-6.43 0-1.42.51-2.58 1.34-3.49-.13-.33-.58-1.65.13-3.44 0 0 1.09-.35 3.58 1.33A12.44 12.44 0 0 1 16 9.8c1.1.01 2.22.15 3.26.43 2.48-1.68 3.57-1.33 3.57-1.33.71 1.79.26 3.11.13 3.44.83.91 1.34 2.07 1.34 3.49 0 5-3.05 6.1-5.95 6.42.47.4.88 1.2.88 2.42v3.58c0 .35.23.76.89.63C25.28 26.62 29 21.75 29 16 29 8.82 23.18 3 16 3Z" fill="currentColor"/>
+        </svg>
+      )}
+      <span>{label}</span>
+    </a>
+  ))}
+</div>
+
+<!-- Progress dots — one per phase, generated at build time from PHASES.length -->
+<div class="dots" id="dots" aria-hidden="true">
+  {PHASES.map((_, i) => <span class="dot" data-index={i}></span>)}
+</div>
+
+<script>
+  import { runIntro } from '../../scripts/intro-sequence';
+  runIntro();
+</script>
+
+<style>
+  /* ── Grain ──────────────────────────────────────────────────────────────── */
+  .grain {
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 250px 250px;
+    opacity: 0.035;
+    pointer-events: none;
+    z-index: 2;
+    animation: grain-shift 8s steps(2, end) infinite;
+  }
+
+  @keyframes grain-shift {
+    0%   { transform: translate(0,   0);   }
+    10%  { transform: translate(-2%, -3%); }
+    20%  { transform: translate(3%,  1%);  }
+    30%  { transform: translate(-1%, 4%);  }
+    40%  { transform: translate(4%,  -2%); }
+    50%  { transform: translate(-3%, 0%);  }
+    60%  { transform: translate(1%,  3%);  }
+    70%  { transform: translate(-4%, -1%); }
+    80%  { transform: translate(2%,  -4%); }
+    90%  { transform: translate(-2%, 2%);  }
+    100% { transform: translate(0,   0);   }
+  }
+
+  /* ── Ambient glow ───────────────────────────────────────────────────────── */
+  .ambient {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(255,255,255,0.02)  0%, transparent 70%),
+      radial-gradient(ellipse 50% 35% at 80% 20%, rgba(255,255,255,0.015) 0%, transparent 70%);
+    animation: ambient-pulse 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes ambient-pulse {
+    from { opacity: 0.6; }
+    to   { opacity: 1;   }
+  }
+
+  /* ── Stage (text container) ─────────────────────────────────────────────── */
+  .stage {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  /* ── Text wrapper ───────────────────────────────────────────────────────── */
+  .text-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .headline {
+    font-family: var(--font-sans);
+    font-size: clamp(2.4rem, 7vw, 7.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: #ffffff;
+  }
+
+  .headline-inner {
+    display: inline-block;
+    transform-origin: center bottom;
+    /* opacity / transform / filter driven by intro-sequence.ts */
+  }
+
+  /* ── Cursor ─────────────────────────────────────────────────────────────── */
+  .cursor-line {
+    display: inline-block;
+    width: 3px;
+    height: 0.85em;
+    background: #fff;
+    border-radius: 2px;
+    opacity: 0;
+    margin-left: 2px;
+    vertical-align: baseline;
+    transform: translateY(0.1em);
+  }
+
+  .cursor-line.visible {
+    animation: cursor-blink 1.1s step-end infinite;
+  }
+
+  @keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  /* ── Contact button ─────────────────────────────────────────────────────── */
+  /*
+   * Fixed and independently centered.
+   * During the sequence it sits at top: 68% (below the text).
+   * The .finale class (added at sequence end) transitions it to top: 50%.
+   */
+  .contact-wrap {
+    position: fixed;
+    top: 68%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease, top 1s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .contact-wrap.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .contact-wrap.finale {
+    top: 50%;
+  }
+
+  .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1.1rem 2.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease, background 0.3s ease;
+    backdrop-filter: blur(12px);
+    filter: grayscale(1);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .contact-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    filter: none;
+  }
+
+  .contact-btn[data-brand="whatsapp"]:hover {
+    border-color: #25D366;
+    color: #25D366;
+    box-shadow: 0 0 20px rgba(37, 211, 102, 0.15);
+  }
+
+  .contact-btn[data-brand="gmail"]:hover {
+    border-color: #EA4335;
+    color: #EA4335;
+    box-shadow: 0 0 20px rgba(234, 67, 53, 0.15);
+  }
+
+  .contact-btn[data-brand="github"]:hover {
+    border-color: #f0f0f0;
+    color: #f0f0f0;
+    box-shadow: 0 0 20px rgba(240, 240, 240, 0.1);
+  }
+
+  .contact-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  /* ── Progress dots ──────────────────────────────────────────────────────── */
+  .dots {
+    position: fixed;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 15;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: background 0.4s, transform 0.4s;
+  }
+
+  .dot.active {
+    background: rgba(255, 255, 255, 0.85);
+    transform: scale(1.4);
+  }
+
+  /* ── Reduced-motion overrides ───────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .grain,
+    .ambient { animation: none; }
+    .ambient  { opacity: 1; }
+
+    /* Suppress the top transition so button appears at center immediately */
+    .contact-wrap { transition: opacity 0s; }
+  }
+</style>
