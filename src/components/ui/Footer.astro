@@ -3,26 +3,62 @@
 
 <footer class="footer">
   <div class="footer-content">
-    <p>Riwi | SENA | Renting Colombia</p>
+    <div class="footer-brand">
+      <span>MelSoft</span>
+    </div>
+    <div class="footer-credits">
+      <span>Riwi</span>
+      <span class="separator">·</span>
+      <span>SENA</span>
+      <span class="separator">·</span>
+      <span>Renting Colombia</span>
+    </div>
   </div>
 </footer>
 
 <style>
   .footer {
-    padding: 2rem 1rem;
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Asumiendo un tema oscuro por el BaseLayout */
+    padding: 2rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: 4rem;
   }
   .footer-content {
     max-width: 1200px;
     margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
   }
-  .footer-content p {
-    margin: 0;
-    color: #a3a3a3; /* Color gris suave */
-    font-family: 'Space Mono', monospace; /* Usando la fuente importada en el layout */
-    font-size: 0.875rem;
+  .footer-brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #ffffff;
     letter-spacing: 0.05em;
+  }
+  .footer-credits {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    color: #a3a3a3;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.875rem;
+  }
+  .separator {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  @media (max-width: 640px) {
+    .footer-content {
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+    .footer-credits {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   }
 </style>
