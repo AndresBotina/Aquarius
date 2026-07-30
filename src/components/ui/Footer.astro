@@ -8,9 +8,7 @@
     </div>
     <div class="footer-credits">
       <span>Riwi</span>
-      <span class="separator">·</span>
       <span>SENA</span>
-      <span class="separator">·</span>
       <span>Renting Colombia</span>
     </div>
   </div>
@@ -40,14 +38,12 @@
   }
   .footer-credits {
     display: flex;
-    gap: 0.75rem;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
     color: #a3a3a3;
     font-family: 'Space Mono', monospace;
     font-size: 0.875rem;
-  }
-  .separator {
-    color: rgba(255, 255, 255, 0.2);
   }
 
   @media (max-width: 640px) {
@@ -57,8 +53,7 @@
       text-align: center;
     }
     .footer-credits {
-      flex-wrap: wrap;
-      justify-content: center;
+      align-items: center;
     }
   }
 </style>
