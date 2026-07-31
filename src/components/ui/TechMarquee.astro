@@ -91,7 +91,13 @@ function getIcon(slug: string): string | null {
     flex-shrink: 0;
   }
 
-  .marquee-item svg {
+  /*
+   * Los SVG entran por set:html, así que NO reciben el data-astro-cid del
+   * scoping de Astro. `:global(svg)` desacopla esa parte del selector para
+   * que aplique al SVG inyectado; `.marquee-item` sigue scopeado y acota el
+   * alcance. Sin esto el fill nunca se aplica y el icono queda negro sobre negro.
+   */
+  .marquee-item :global(svg) {
     width: 28px;
     height: 28px;
     fill: rgba(255, 255, 255, 0.45);
