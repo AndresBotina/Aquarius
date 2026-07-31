@@ -21,7 +21,7 @@
 
 **Aquarius** es mi portafolio personal: un sitio para mostrar mi trabajo en **backend, IA y automatización** a reclutadores y clientes. La idea no es lucirme con frontend, sino comunicar que construyo **sistemas listos para producción**.
 
-Por ahora vive en su **Fase 1**: un *teaser* dinámico de "en construcción". Una secuencia de frases animadas que cierra sobre un botón de contacto persistente, todo sobre un fondo vivo de la **constelación de Acuario** — luceros con titileo suave y líneas que se re-trazan entre puntos.
+Por ahora vive en su **Fase 1**: un *teaser* dinámico de "en construcción". Una secuencia de frases animadas que cierra sobre un botón de contacto persistente, todo sobre un fondo vivo de la **constelación de Acuario** — luceros con titileo suave y líneas que se re-trazan entre puntos. Debajo, un **marquee de tecnologías** en dos filas con desplazamiento infinito.
 
 <br/>
 
@@ -37,6 +37,8 @@ Por ahora vive en su **Fase 1**: un *teaser* dinámico de "en construcción". Un
 
 Sin Tailwind ni React por ahora — se incorporan en Fase 2, cuando haya trabajo real que los justifique. Tipografías: **Space Grotesk** (sans) y **Space Mono** (mono).
 
+Única dependencia además de Astro: [`simple-icons`](https://simpleicons.org), que resuelve los logos del marquee en *build time* como SVG inlineados — sin peticiones a CDN externo en runtime.
+
 <br/>
 
 ## 📂 Estructura
@@ -44,14 +46,14 @@ Sin Tailwind ni React por ahora — se incorporan en Fase 2, cuando haya trabajo
 ```text
 src/
 ├── styles/        # design tokens + estilos globales
-├── data/          # datos tipados (aquarius.ts, phases, contact)
+├── data/          # datos tipados (aquarius, intro, tech-stack)
 ├── scripts/       # lógica de animación (constellation, intro)
-├── components/    # componentes Astro (IntroSequence, Constellation)
+├── components/    # componentes Astro (IntroSequence, Constellation, TechMarquee, Navbar, Footer)
 ├── layouts/       # BaseLayout
 └── pages/         # index.astro
 ```
 
-Cada capa con una sola responsabilidad: la forma de la constelación vive como coordenadas en `data/`, la animación en `scripts/`, y los componentes solo orquestan.
+Cada capa con una sola responsabilidad: la forma de la constelación vive como coordenadas en `data/`, la animación en `scripts/`, y los componentes solo orquestan. El marquee sigue el mismo patrón — las tecnologías son datos (`data/tech-stack.ts`), el componente solo las repite y las desplaza con CSS puro.
 
 <br/>
 
