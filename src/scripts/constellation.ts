@@ -1,4 +1,4 @@
-import { STARS, EDGES } from '../data/aquarius';
+import { STARS } from '../data/aquarius';
 
 const NS       = 'http://www.w3.org/2000/svg';
 const VW       = 800;
@@ -17,20 +17,17 @@ export function initConstellation(container: HTMLElement): void {
 
   const defs       = svg.querySelector<SVGDefsElement>('defs')!;
   const bgGroup    = svg.getElementById('c-bg')    as SVGGElement;
-  const lineGroup  = svg.getElementById('c-lines') as SVGGElement;
   const starGroup  = svg.getElementById('c-stars') as SVGGElement;
   const driftGroup = svg.getElementById('c-drift') as SVGGElement;
 
   addGradients(defs);
 
   const bgStars = buildBgStars(bgGroup);
-  const lines   = buildLines(lineGroup);
   const stars   = buildStars(starGroup, reduced);
 
   if (reduced) {
     bgStars.forEach(({ el, opacity }) => { el.style.opacity = opacity; });
     stars.forEach(g => { g.style.opacity = '1'; });
-    lines.forEach(({ el }) => { el.style.strokeDashoffset = '0'; });
     return;
   }
 
@@ -42,7 +39,7 @@ export function initConstellation(container: HTMLElement): void {
     }, 80 + i * 18);
   });
 
-  runAppearance(stars, lines, driftGroup);
+  runAppearance(stars, driftGroup);
 }
 
 // ── SVG structure ─────────────────────────────────────────────────────────────
@@ -59,7 +56,7 @@ function buildSVG(): SVGSVGElement {
   const drift = el<SVGGElement>('g');
   drift.id = 'c-drift';
 
-  (['c-bg', 'c-lines', 'c-stars'] as const).forEach(id => {
+  (['c-bg', 'c-stars'] as const).forEach(id => {
     const g = el<SVGGElement>('g');
     g.id = id;
     drift.appendChild(g);
@@ -118,27 +115,6 @@ function buildBgStars(group: SVGGElement): { el: SVGCircleElement; opacity: stri
   });
 }
 
-// ── Constellation lines ───────────────────────────────────────────────────────
-
-function buildLines(group: SVGGElement): { el: SVGLineElement; len: number }[] {
-  return EDGES.map(([a, b]) => {
-    const c = el<SVGLineElement>('line');
-    const len = Math.hypot((STARS[b].x - STARS[a].x) * VW, (STARS[b].y - STARS[a].y) * VH);
-    c.setAttribute('x1', `${STARS[a].x * VW}`);
-    c.setAttribute('y1', `${STARS[a].y * VH}`);
-    c.setAttribute('x2', `${STARS[b].x * VW}`);
-    c.setAttribute('y2', `${STARS[b].y * VH}`);
-    c.setAttribute('stroke', 'white');
-    c.setAttribute('stroke-width', '0.5');
-    c.setAttribute('stroke-opacity', '0.28');
-    c.style.strokeDasharray  = `${len}`;
-    c.style.strokeDashoffset = `${len}`;
-    c.style.opacity = '0';
-    group.appendChild(c);
-    return { el: c, len };
-  });
-}
-
 // ── Constellation stars ───────────────────────────────────────────────────────
 
 function buildStars(group: SVGGElement, reduced: boolean): SVGGElement[] {
@@ -180,12 +156,10 @@ function buildStars(group: SVGGElement, reduced: boolean): SVGGElement[] {
 
 async function runAppearance(
   stars:      SVGGElement[],
-  lines:      { el: SVGLineElement; len: number }[],
   driftGroup: SVGGElement,
 ): Promise<void> {
-  const STAR_STAGGER  = 110; // ms between each star
-  const STAR_FADE     = 700; // ms for fade + scale
-  const LINE_PAUSE    = 350; // ms after stars before drawing lines
+  const STAR_STAGGER = 110; // ms between each star
+  const STAR_FADE    = 700; // ms for fade + scale
 
   stars.forEach((g, i) => {
     setTimeout(() => {
@@ -195,23 +169,10 @@ async function runAppearance(
     }, i * STAR_STAGGER);
   });
 
-  await sleep((stars.length - 1) * STAR_STAGGER + STAR_FADE + LINE_PAUSE);
-
-  let accDelay = 0;
-  lines.forEach(({ el: c, len }) => {
-    accDelay += 300 + Math.random() * 300;
-    setTimeout(() => {
-      c.style.transition       = `stroke-dashoffset 2800ms cubic-bezier(0.15, 0.05, 0.45, 1), opacity 1200ms ease-out`;
-      c.style.strokeDashoffset = '0';
-      c.style.opacity          = '1';
-    }, accDelay);
-  });
-
-  await sleep(accDelay + 2800 + 400);
+  await sleep((stars.length - 1) * STAR_STAGGER + STAR_FADE + 400);
 
   addTwinkle(stars);
   startDrift(driftGroup);
-  startRetrace(lines);
 }
 
 // ── Steady-state behaviors ────────────────────────────────────────────────────
@@ -239,26 +200,6 @@ function startDrift(group: SVGGElement): void {
     group.style.transform = `translate(${dx}px, ${dy}px)`;
     requestAnimationFrame(tick);
   })(t0);
-}
-
-function startRetrace(lines: { el: SVGLineElement; len: number }[]): void {
-  setInterval(() => {
-    const { el: c, len } = lines[Math.floor(Math.random() * lines.length)];
-
-    c.style.transition = 'opacity 1000ms ease-in';
-    c.style.opacity    = '0';
-
-    setTimeout(() => {
-      c.style.transition       = 'none';
-      c.style.strokeDashoffset = `${len}`;
-
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        c.style.transition       = `stroke-dashoffset 2800ms cubic-bezier(0.15, 0.05, 0.45, 1), opacity 1200ms ease-out`;
-        c.style.strokeDashoffset = '0';
-        c.style.opacity          = '1';
-      }));
-    }, 1050);
-  }, 4500);
 }
 
 // ── Utilities ─────────────────────────────────────────────────────────────────

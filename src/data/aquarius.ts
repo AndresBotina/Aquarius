@@ -41,28 +41,3 @@ export const STARS: Star[] = [
   { x: 0.87, y: 0.60, radius: 2.0 }, // 11 ψ¹ Aqr             mag 4.21
   { x: 0.88, y: 0.54, radius: 1.4 }, // 12 χ Aqr              mag 5.06
 ];
-
-/**
- * Index pairs that form the constellation lines.
- *
- * Body:    β(0)→α(1)→γ(2)  and  α(1)→θ(6)
- * Jar:     γ(2)→ζ(3)→π(4)→γ(2)  +  γ(2)→η(5)   ← [4,2] closes the triangle
- * Stream:  η(5)→θ(6)→λ(7)→τ²(8)→δ(9)           ← η→Skat flow
- * Cascade: δ(9)→φ(10)→ψ¹(11)→χ(12)             ← complete cascade
- */
-export const EDGES: [number, number][] = [
-  [0,  1],  // β → α     (left shoulder to right shoulder)
-  [1,  2],  // α → γ     (right shoulder to forearm / jar hand)
-  [1,  6],  // α → θ     (body axis going south)
-  [2,  3],  // γ → ζ     (jar: right arm of Y)
-  [3,  4],  // ζ → π     (jar: up to top)
-  [4,  2],  // π → γ     (jar: close the triangle ← user-specified)
-  [2,  5],  // γ → η     (jar: left arm of Y)
-  [5,  6],  // η → θ     (water stream begins, flows southwest)
-  [6,  7],  // θ → λ     (stream continues east)
-  [7,  8],  // λ → τ²    (stream flows south)
-  [8,  9],  // τ² → δ    (stream reaches Skat)
-  [9,  10], // δ → φ     (cascade: Skat → φ)
-  [10, 11], // φ → ψ¹    (cascade continues)
-  [11, 12], // ψ¹ → χ    (cascade end)
-];
