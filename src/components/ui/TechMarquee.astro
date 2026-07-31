@@ -3,9 +3,12 @@ import { ROW_1, ROW_2 } from '../../data/tech-stack';
 import type { Tech } from '../../data/tech-stack';
 import * as simpleIcons from 'simple-icons';
 
-// Cada track duplica su fila para que translateX(-50%) haga un loop sin costura.
-const track1: Tech[] = [...ROW_1, ...ROW_1];
-const track2: Tech[] = [...ROW_2, ...ROW_2];
+// Cada track repite su fila 4× para que translateX(-25%) haga un loop sin
+// costura: una "unidad" es 25% del track y al trasladar exactamente esa
+// unidad el reinicio es invisible. 4 repeticiones garantizan que el contenido
+// cubra el viewport aun cuando una sola pasada de 7 items sea más angosta.
+const track1: Tech[] = [...ROW_1, ...ROW_1, ...ROW_1, ...ROW_1];
+const track2: Tech[] = [...ROW_2, ...ROW_2, ...ROW_2, ...ROW_2];
 
 // Resuelve el SVG del icono en build time. `null` si el slug no existe
 // en simple-icons (p. ej. twilio) → el item cae al fallback de solo-nombre.
@@ -78,7 +81,7 @@ function getIcon(slug: string): string | null {
 
   @keyframes marquee-scroll {
     from { transform: translateX(0);     }
-    to   { transform: translateX(-50%);  }
+    to   { transform: translateX(-25%);  }
   }
 
   .marquee-item {
