@@ -57,7 +57,6 @@ function skipToEnd(
   cursor.classList.toggle('visible', !last.hideCursor);
   revealContact(contactWrap);
   setDot(dots, PHASES.length - 1);
-  if (textWrapper)   textWrapper.style.opacity   = '0';
   if (dotsContainer) dotsContainer.style.opacity = '0';
 }
 
@@ -121,10 +120,6 @@ async function runSequence(
 
   revealContact(contactWrap);
 
-  if (textWrapper) {
-    textWrapper.style.transition = 'opacity 0.9s ease';
-    textWrapper.style.opacity    = '0';
-  }
   if (dotsContainer) {
     dotsContainer.style.transition = 'opacity 0.6s ease';
     dotsContainer.style.opacity    = '0';

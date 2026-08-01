@@ -58,6 +58,11 @@ function getIcon(slug: string): string | null {
     width: 100%;
     overflow: hidden;
     padding: 3rem 0;
+    /* Patrón de secciones de contenido: relative + z-index por encima
+       de la constelación fija (z-index 0) para que los luceros no floten
+       sobre el contenido. */
+    position: relative;
+    z-index: 1;
   }
 
   .marquee-row {
