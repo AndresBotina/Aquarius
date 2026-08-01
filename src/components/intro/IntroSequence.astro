@@ -15,14 +15,9 @@ import { PHASES, CONTACTS } from '../../data/intro';
       <span class="headline-inner" id="headline-inner">{PHASES[0].text}</span><span class="cursor-line" id="cursor-line" aria-hidden="true"></span>
     </h1>
   </div>
-</main>
 
-<!--
-  Contact button — position: fixed so it's independent of the stage layout.
-  Starts at top: 68% (below the text) and transitions to top: 50% (true
-  center) when .finale is added at the end of the sequence.
--->
-<div class="contact-wrap" id="contact-wrap" aria-hidden="true">
+  <!-- Botones de contacto — en flujo normal, centrados dentro del .stage. -->
+  <div class="contact-wrap" id="contact-wrap" aria-hidden="true">
   {CONTACTS.map(({ href, label, icon }) => (
     <a
       href={href}
@@ -52,7 +47,8 @@ import { PHASES, CONTACTS } from '../../data/intro';
       <span>{label}</span>
     </a>
   ))}
-</div>
+  </div>
+</main>
 
 <!-- Progress dots — one per phase, generated at build time from PHASES.length -->
 <div class="dots" id="dots" aria-hidden="true">
@@ -116,8 +112,10 @@ import { PHASES, CONTACTS } from '../../data/intro';
     z-index: 10;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2.5rem;
     padding: 2rem;
   }
 
@@ -169,19 +167,16 @@ import { PHASES, CONTACTS } from '../../data/intro';
 
   /* ── Contact button ─────────────────────────────────────────────────────── */
   /*
-   * Fixed and independently centered.
-   * During the sequence it sits at top: 68% (below the text).
-   * The .finale class (added at sequence end) transitions it to top: 50%.
+   * En flujo normal dentro del .stage: el centrado lo da el flexbox del
+   * .stage (align-items / justify-content). El reveal al final de la
+   * secuencia solo cambia opacity + pointer-events.
    */
   .contact-wrap {
-    position: fixed;
-    top: 68%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     z-index: 20;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.8s ease, top 1s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.8s ease;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -191,10 +186,6 @@ import { PHASES, CONTACTS } from '../../data/intro';
   .contact-wrap.visible {
     opacity: 1;
     pointer-events: auto;
-  }
-
-  .contact-wrap.finale {
-    top: 50%;
   }
 
   .contact-btn {
@@ -271,7 +262,7 @@ import { PHASES, CONTACTS } from '../../data/intro';
     .ambient { animation: none; }
     .ambient  { opacity: 1; }
 
-    /* Suppress the top transition so button appears at center immediately */
+    /* Aparición inmediata de los botones, sin fundido */
     .contact-wrap { transition: opacity 0s; }
   }
 </style>
