@@ -12,18 +12,17 @@ export function runIntro(): void {
   const inner         = document.getElementById('headline-inner') as HTMLElement | null;
   const cursor        = document.getElementById('cursor-line')    as HTMLElement | null;
   const contactWrap   = document.getElementById('contact-wrap')   as HTMLElement | null;
-  const textWrapper   = document.getElementById('text-wrapper')   as HTMLElement | null;
   const dotsContainer = document.getElementById('dots')           as HTMLElement | null;
   const dots          = Array.from(document.querySelectorAll<HTMLElement>('.dot'));
 
   if (!inner || !cursor || !contactWrap) return;
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    skipToEnd(inner, cursor, contactWrap, textWrapper, dotsContainer, dots);
+    skipToEnd(inner, cursor, contactWrap, dotsContainer, dots);
     return;
   }
 
-  runSequence(inner, cursor, contactWrap, textWrapper, dotsContainer, dots);
+  runSequence(inner, cursor, contactWrap, dotsContainer, dots);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -45,7 +44,6 @@ function skipToEnd(
   inner:         HTMLElement,
   cursor:        HTMLElement,
   contactWrap:   HTMLElement,
-  textWrapper:   HTMLElement | null,
   dotsContainer: HTMLElement | null,
   dots:          HTMLElement[],
 ): void {
@@ -82,7 +80,6 @@ async function runSequence(
   inner:         HTMLElement,
   cursor:        HTMLElement,
   contactWrap:   HTMLElement,
-  textWrapper:   HTMLElement | null,
   dotsContainer: HTMLElement | null,
   dots:          HTMLElement[],
 ): Promise<void> {
