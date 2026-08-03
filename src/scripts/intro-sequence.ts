@@ -2,6 +2,7 @@ import { PHASES } from '../data/intro';
 
 const CHAR_WRITE_MS = 55;  // ms por caracter al escribir
 const CHAR_ERASE_MS = 30;  // ms por caracter al borrar
+const FADE_OUT_MS   = 500; // ms del fade final del titular
 
 let _started = false;
 
@@ -12,17 +13,18 @@ export function runIntro(): void {
   const inner         = document.getElementById('headline-inner') as HTMLElement | null;
   const cursor        = document.getElementById('cursor-line')    as HTMLElement | null;
   const contactWrap   = document.getElementById('contact-wrap')   as HTMLElement | null;
+  const textWrapper   = document.getElementById('text-wrapper')   as HTMLElement | null;
   const dotsContainer = document.getElementById('dots')           as HTMLElement | null;
   const dots          = Array.from(document.querySelectorAll<HTMLElement>('.dot'));
 
   if (!inner || !cursor || !contactWrap) return;
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    skipToEnd(inner, cursor, contactWrap, dotsContainer, dots);
+    skipToEnd(inner, cursor, contactWrap, textWrapper, dotsContainer, dots);
     return;
   }
 
-  runSequence(inner, cursor, contactWrap, dotsContainer, dots);
+  runSequence(inner, cursor, contactWrap, textWrapper, dotsContainer, dots);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -40,10 +42,23 @@ function revealContact(el: HTMLElement): void {
   el.removeAttribute('aria-hidden');
 }
 
+/**
+ * Desvanece el titular y luego lo saca del flujo (display: none), para que el
+ * flexbox del .stage recentre los contactos sin espacio fantasma.
+ */
+async function hideHeadline(textWrapper: HTMLElement | null): Promise<void> {
+  if (!textWrapper) return;
+  textWrapper.style.transition = `opacity ${FADE_OUT_MS}ms ease`;
+  textWrapper.style.opacity    = '0';
+  await sleep(FADE_OUT_MS);
+  textWrapper.style.display    = 'none';
+}
+
 function skipToEnd(
   inner:         HTMLElement,
   cursor:        HTMLElement,
   contactWrap:   HTMLElement,
+  textWrapper:   HTMLElement | null,
   dotsContainer: HTMLElement | null,
   dots:          HTMLElement[],
 ): void {
@@ -53,6 +68,8 @@ function skipToEnd(
   inner.style.transform = 'none';
   inner.style.filter    = 'none';
   cursor.classList.toggle('visible', !last.hideCursor);
+  // Sin animación: el titular arranca ya oculto y fuera del flujo.
+  if (textWrapper) textWrapper.style.display = 'none';
   revealContact(contactWrap);
   setDot(dots, PHASES.length - 1);
   if (dotsContainer) dotsContainer.style.opacity = '0';
@@ -80,6 +97,7 @@ async function runSequence(
   inner:         HTMLElement,
   cursor:        HTMLElement,
   contactWrap:   HTMLElement,
+  textWrapper:   HTMLElement | null,
   dotsContainer: HTMLElement | null,
   dots:          HTMLElement[],
 ): Promise<void> {
@@ -115,10 +133,12 @@ async function runSequence(
   // ── Finale ────────────────────────────────────────────────────────────────
   await sleep(PHASES[PHASES.length - 1].duration);
 
-  revealContact(contactWrap);
-
   if (dotsContainer) {
     dotsContainer.style.transition = 'opacity 0.6s ease';
     dotsContainer.style.opacity    = '0';
   }
+
+  await hideHeadline(textWrapper);
+
+  revealContact(contactWrap);
 }
