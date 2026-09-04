@@ -18,7 +18,7 @@ import { PHASES, CONTACTS } from '../../data/intro';
 
   <!-- Botones de contacto — en flujo normal, centrados dentro del .stage. -->
   <div class="contact-wrap" id="contact-wrap" aria-hidden="true">
-    <div class="welcome-glass">Bienvenido</div>
+    <div class="welcome-text">Escríbeme..</div>
     <div class="contact-buttons">
     {CONTACTS.map(({ href, label, icon }) => (
     <a
@@ -193,20 +193,13 @@ import { PHASES, CONTACTS } from '../../data/intro';
     transform: translateY(0);
   }
 
-  .welcome-glass {
+  .welcome-text {
     display: inline-flex;
-    padding: 1.2rem 4rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 100px;
-    background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
     font-family: var(--font-sans);
-    font-size: clamp(2rem, 5vw, 3rem);
+    font-size: clamp(1.5rem, 4vw, 2rem);
     font-weight: 400;
     letter-spacing: 0.05em;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
   }
 
