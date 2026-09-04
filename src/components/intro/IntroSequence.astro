@@ -18,7 +18,9 @@ import { PHASES, CONTACTS } from '../../data/intro';
 
   <!-- Botones de contacto — en flujo normal, centrados dentro del .stage. -->
   <div class="contact-wrap" id="contact-wrap" aria-hidden="true">
-  {CONTACTS.map(({ href, label, icon }) => (
+    <div class="welcome-glass">Bienvenido</div>
+    <div class="contact-buttons">
+    {CONTACTS.map(({ href, label, icon }) => (
     <a
       href={href}
       target="_blank"
@@ -46,7 +48,8 @@ import { PHASES, CONTACTS } from '../../data/intro';
       )}
       <span>{label}</span>
     </a>
-  ))}
+    ))}
+    </div>
   </div>
 </main>
 
@@ -176,16 +179,42 @@ import { PHASES, CONTACTS } from '../../data/intro';
     z-index: 20;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.8s ease;
+    transition: opacity 0.8s ease, transform 0.8s ease;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    transform: translateY(20px);
   }
 
   .contact-wrap.visible {
     opacity: 1;
     pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .welcome-glass {
+    display: inline-flex;
+    padding: 1.2rem 4rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-family: var(--font-sans);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+  }
+
+  .contact-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
   }
 
   .contact-btn {
